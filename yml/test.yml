@@ -1,0 +1,20 @@
+---
+- name: tomcat app deploy
+  become: True
+  gather_facts: False
+  vars:
+       war_new: /geelyapp/newfile
+       war_old: /geelyapp/oldfile
+       script_path: /geelyapp/ansible
+       tomcat_root:
+       module:
+       host: 10.86.87.10
+       url:
+  hosts: '{{ host }}'
+  environment:
+        JAVA_HOME: /usr/local/java
+  tasks:
+    - name: test
+      shell: date
+      register: res
+    - debug: msg={{res}}

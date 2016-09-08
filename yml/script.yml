@@ -1,0 +1,5 @@
+---
+- hosts: 10.86.87.49
+  tasks:
+  - name: test
+    shell: /geelyapp/tomcat-ansible/script/tomcatansible.sh status

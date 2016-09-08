@@ -1,0 +1,24 @@
+- name: dcs update 
+  hosts: localhost
+  sudo: True
+  vars:
+    war_file: /tmp/dcs.war
+    tomcat_root: /geelyapp/tomcat-ansible
+  tasks:
+    - name: stop tomcat.
+      action: shell {{ tomcat_root }}/bin/catalina.sh stop
+    - name: rm war.
+      file: 
+        state: absent
+        dest: "{{ tomcat_root }}/webapps/dcs.war"
+    - name: update war
+      file:
+        state: link
+        src: "{{ war_file }}"
+        dest: "{{ tomcat_root }}/webapps/dcs.war"
+        owner: root
+        group: root
+        mode: 755
+    - name: start tomcat.
+      action: shell {{ tomcat_root }}/bin/catalina.sh start
+      tags: abc

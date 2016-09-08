@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>cn.evun.yuncaijia</groupId>
+  <artifactId>gap</artifactId>
+  <versioning>
+    <versions>
+      <version>2.9.4-SNAPSHOT</version>
+      <version>2.9.5-SNAPSHOT</version>
+      <version>2.9.9-SNAPSHOT</version>
+      <version>3.0.0-SNAPSHOT</version>
+      <version>3.0.1-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20160831063556</lastUpdated>
+  </versioning>
+</metadata>

@@ -1,0 +1,46 @@
+---
+- name: tomcat app deploy
+ # become: True
+  gather_facts: False
+  vars:
+    tomcat_root: /geelyapp/tomcat-ansible
+    war_new: "{{tomcat_root}}/newfile"
+    war_old: "{{tomcat_root}}/oldfile"
+    script_path: "{{tomcat_root}}/script"
+    module: ansible
+    host: 10.86.87.10
+    url: http://10.86.87.253:8088/Beta/VSD/Openapi/openapi.war
+  hosts: '{{ host }}'
+#  environment:
+#    JAVA_HOME: /usr/local/java
+  tasks:
+    - name: create script folder
+      file: path={{ item }} state=directory
+      with_items:
+        - '{{script_path}}'
+        - '{{war_old}}'
+        - '{{war_new}}'
+    - get_url: url={{ url }} dest={{ war_new }}/{{ module }}.war
+      tags: first
+    - name: copytomcat script
+      template: src=/geelyapp/opsdev/web/yml/templates/tomcat.j2 dest={{ script_path }}/tomcat{{ module }}.sh mode=0755
+    - name: stop tomcat
+      action: shell {{ script_path }}/tomcat{{ module }}.sh stop
+      register: stopres
+    - name: show stop res
+      debug: var=stopres
+    - name: move old file to temp folder
+      shell: removes={{ tomcat_root }}/webapps/{{ module }}.war mv {{ tomcat_root }}/webapps/{{ module }}.war {{ war_old }} && rm -rf {{ tomcat_root }}/webapps/{{ module }}*
+    - name: clean work directory
+      shell: rm -rf {{ tomcat_root }}/work/*
+      ignore_errors: yes
+    - name: move new file to work path
+      shell: mv {{ war_new }}/{{ module }}.war {{ tomcat_root }}/webapps/
+    - name: start tomcat.
+      shell: source /etc/profile && nohup {{ script_path }}/tomcat{{ module }}.sh start &
+      register: startres
+    - name: show
+      debug: var=startres
+      #shell: nohup /geelyapp/tomcat-ansible/bin/catalina.sh start & 
+      #service: name=tomcat state=started enabled=yes
+      #shell: /etc/init.d/tomcat start

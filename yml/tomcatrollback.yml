@@ -1,0 +1,27 @@
+---
+- name: rollback tomcat app to last VErsion
+  gather_facts: False
+  vars:
+    tomcat_root: 
+    war_new: "{{tomcat_root}}/newfile"
+    war_old: "{{tomcat_root}}/oldfile"
+    script_path: "{{tomcat_root}}/script"
+    module: 
+    host: 
+  hosts: '{{ host }}'
+#  environment:
+#    JAVA_HOME: /usr/local/java
+  tasks:
+    - name: stop tomcat
+      action: shell {{ script_path }}/tomcat{{ module }}.sh stop
+    - name: move old file to work path
+      shell: removes={{war_old}}/{{module}}.war rm -rf {{ tomcat_root }}/webapps/{{ module }}* && mv {{war_old}}/{{module}}.war {{tomcat_root}}/webapps/
+      register: res
+      ignore_errors: yes
+    - name: show res
+      debug: msg={{ res.stdout_lines | default('Rollback File Success!',True)}}
+    - name: start tomcat.
+      shell: source /etc/profile && nohup {{ script_path }}/tomcat{{ module }}.sh start &
+      register: res
+    - name: show startup results
+      debug: msg={{ res.stdout_lines }}

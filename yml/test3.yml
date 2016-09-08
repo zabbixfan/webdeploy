@@ -1,0 +1,14 @@
+---
+- hosts: 10.86.87.10
+  vars:
+    root: /test/abc
+    child: "{{ root }}/bcd"
+    tomcat_root: aaa/bbb
+  tasks:
+    - template: src=templates/tomcat.j2 dest={{ root }}/aa.sh
+    - name: test
+      file: path={{ item }} state=directory
+      with_items:
+        - "{{  root  }}"
+        - "{{  child  }}"
+    - shell: source /etc/profile && bash /geelyapp/opsdev/web/yml/jdk.sh
